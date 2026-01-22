@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <SDL2/SDL.h>
 #include "raylib.h"
 #include "window.hpp"
 
@@ -42,12 +43,44 @@ void Button::drawButton(){
 //------------------Window--------------------
 Window::Window(int width, int height, const char* title) 
 : width(width), height(height), title(title) {
-	InitWindow(width, height, title);
-	SetTargetFPS(60);
+	running = true;
+
+	if (SDL_Init(SDL_INIT_VIDEO) != 0){
+		SDL_Log("SDL_Init Error: %s", SDL_GetError());
+		running = false;
+		return;
+	}
+
+	window = SDL_CreateWindow(title,
+						SDL_WINDOWPOS_CENTERED,
+						SDL_WINDOWPOS_CENTERED,
+						widh, height,
+						SDL_WINDOW_SHOWN);
+
+	if (!window){
+		SDL_Log("SDL_CreateWindow Error: %s", SDL_GetError());
+		running = false;
+		SDL_Quit();
+		return;
+	}
+
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if (!renderer){
+		SDL_Log("SDL_CreateRenderer Error: %s", SDL_GetError());
+		SDL_DestroyWindow(window);
+		running = false;
+		SDL_Quit();
+		return;
+	}
 
 	buttons.push_back(std::make_unique<Button>(10, 10, "Add Section"));
 }
-Window::~Window(){}
+
+Window::~Window(){
+	if (renderer) SDL_DestroyRenderer(renderer);
+	if (window) SDL_DestroyWindow(window);
+	SDL_Quit();
+}
 
 //Setters
 void Window::setWidth(int newWidth){
@@ -67,12 +100,21 @@ std::string Window::getTitle(){return title;}
 
 //Drawers
 void Window::drawWindow(){
-	while (!WindowShouldClose()){
-		BeginDrawing();
-			ClearBackground(bgColor);
-			update();
-			drawButtons();
-		EndDrawing();
+	while (running){
+		while (SDL_PollEvent(&event)){
+			if (event.type == SDL_QUIT){
+				running = false;
+			}
+		}
+
+		SetDrawColor(renderer, bgColor);
+		SDL_RenderClear(renderer);
+
+		update();
+
+		drawButtons();
+
+		SDL_RenderPresent(renderer);
 	}
 }
 

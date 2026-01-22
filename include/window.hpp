@@ -4,9 +4,15 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include "colors.hpp"
 #include "section.hpp"
-#include "raylib.h"
 
+struct Color{
+	Uint8 r, g, b, a;
+
+	Color (Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha)
+	: r(red), g(green), b(blue), a(alpha) {}
+};
 
 class Button{
 	public:
@@ -76,6 +82,7 @@ class Window{
 		void update();
 
 	private:
+		bool running;
 		int width, height;
 		const char* title;
 		std::vector<std::unique_ptr<Button>> buttons;
