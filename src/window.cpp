@@ -12,6 +12,8 @@ Button::Button(int x, int y, const char* title, int width, int height)
 : x(x), y(y), width(width), height(height), title(title) {
 	textX = x + (width - MeasureText(title, fontSize)) / 2;
 	textY = y + (height - fontSize) / 2;
+
+	rect = SDL_Rect{x, y, width, height};
 }
 
 Button::~Button(){}
@@ -29,8 +31,7 @@ bool Button::getIsActive(){return isActive;}
 Color Button::getColor(){return color;}
 Color Button::getActiveColor(){return activeColor;}
 Color Button::getStandByeColor(){return standByeColor;}
-Rectangle Button::getRec(){return Rectangle{(float)x, (float)y, (float)width, (float)height};}
-
+SDL_Rect Button::getRect(){return SDL_Rect{x, y, width, height};} 
 
 //Drawers
 void Button::drawButton(){
@@ -128,12 +129,17 @@ void Window::drawButtons(){
 void Window::update(){
 	//std::cout << "Updating window" << std::endl;
 	Vector2 mousePos = GetMousePosition();
+	int x, y;
+	SDL_GetRelativeMouseState(&x, &y);
+	SDL_Point mousePos = {mouseX, mouseY};
 
 	for (auto& button : buttons){
+		//Un-highlight button
 		if (button->getIsActive()){
 			button->setColor(button->getStandByeColor());
 		}
-		if (CheckCollisionPointRec(mousePos, button->getRec())){
+		//Highlight button
+		if (SDL_PointInRect(&mousePos, &button->getRect())){
 			button->setColor(button->getActiveColor());
 		}
 	}

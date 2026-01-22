@@ -7,12 +7,6 @@
 #include "colors.hpp"
 #include "section.hpp"
 
-struct Color{
-	Uint8 r, g, b, a;
-
-	Color (Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha)
-	: r(red), g(green), b(blue), a(alpha) {}
-};
 
 class Button{
 	public:
@@ -47,6 +41,7 @@ class Button{
 		int width = 100;
 		int height = 70;
 		const char* title;
+		SDL_Rect rect;
 		Color color = WHITE;
 		Color standByeColor = WHITE;
 		Color activeColor = DARKGRAY;
