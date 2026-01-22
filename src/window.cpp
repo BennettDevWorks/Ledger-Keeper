@@ -3,40 +3,49 @@
 #include <memory>
 #include <string>
 #include <SDL2/SDL.h>
-#include "raylib.h"
 #include "window.hpp"
+#include "colors.hpp"
 
 
 //------------------Button---------------------
-Button::Button(int x, int y, const char* title, int width, int height)
-: x(x), y(y), width(width), height(height), title(title) {
-	textX = x + (width - MeasureText(title, fontSize)) / 2;
-	textY = y + (height - fontSize) / 2;
-
+Button::Button(SDL_Renderer* renderer, int x, int y, const char* title, int width, int height)
+: renderer(renderer), title(title) {
 	rect = SDL_Rect{x, y, width, height};
+	textX = rect.x + (rect.w - MeasureText(title, fontSize)) / 2;
+	textY = rect.h + (rect.h - fontSize) / 2;
 }
 
 Button::~Button(){}
 
 //Setters
-void Button::setWidth(int newWidth){width = newWidth;}
-void Button::setHeight(int newHeight){height = newHeight;}
-void Button::setTitle(const char* newTitle){title = newTitle;}
+void Button::setWidth(int newWidth){
+	rect.w = newWidth;
+	textX = rect.x + (rect.w - MeasureText(title, fontSize)) / 2;
+}
+void Button::setHeight(int newHeight){
+	rect.h= newHeight;
+	textY = rect.y + (rect.h - fontSize) / 2;
+}
+void Button::setTitle(const char* newTitle){
+	title = newTitle;
+	textX = rect.x + (rect.w - MeasureText(title, fontSize)) / 2;
+	textY = rect.y + (rect.h - fontSize) / 2;
+}
 void Button::setColor(Color newColor){color = newColor;}
 
 //Getters
-int Button::getWidth(){return width;}
-int Button::getHeight(){return height;}
+int Button::getWidth(){return rect.w;}
+int Button::getHeight(){return rect.h;}
 bool Button::getIsActive(){return isActive;}
 Color Button::getColor(){return color;}
 Color Button::getActiveColor(){return activeColor;}
 Color Button::getStandByeColor(){return standByeColor;}
-SDL_Rect Button::getRect(){return SDL_Rect{x, y, width, height};} 
+SDL_Rect Button::getRect(){return rect;} 
 
 //Drawers
 void Button::drawButton(){
-	DrawRectangle(x, y, width, height, color);
-	DrawText(title, textX, textY, fontSize, textColor);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderFillRect(renderer, &rect);
 }
 
 //Actions

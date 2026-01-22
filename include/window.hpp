@@ -10,7 +10,7 @@
 
 class Button{
 	public:
-		Button(int x, int y, const char* title, int width=100, int height=70);
+		Button(SDL_Renderer* renderer, int x, int y, const char* title, int width=100, int height=70);
 		~Button();
 
 		//Setters
@@ -27,7 +27,7 @@ class Button{
 		Color getColor();
 		Color getActiveColor();
 		Color getStandByeColor();
-		Rectangle getRec();
+		SDL_Rect getRect();
 
 		//Drawers
 		void drawButton();
@@ -36,12 +36,11 @@ class Button{
 		void action();
 
 	private:
-		int x, y, textX, textY;
+		int textX, textY;
 		int fontSize = 12;
-		int width = 100;
-		int height = 70;
 		const char* title;
 		SDL_Rect rect;
+		SDL_Renderer* renderer;
 		Color color = WHITE;
 		Color standByeColor = WHITE;
 		Color activeColor = DARKGRAY;

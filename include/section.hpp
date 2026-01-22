@@ -19,16 +19,14 @@ class Section{
 		int getWidth();
 		int getHeight();
 		const char* getTitle();
+		SDL_Rect getRect();
 
 		//Drawer
 		void drawSection();
 
 	private:
-		int width = 50;
-		int height = 50;
-		int x = 50;
-		int y = 50;
 		const char* title;
+		SDL_Rect rect;
 		int value;
 		Color color = WHITE;
 };
