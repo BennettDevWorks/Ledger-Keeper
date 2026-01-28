@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "colors.hpp"
 #include "section.hpp"
 
@@ -36,8 +38,9 @@ class Button{
 		void action();
 
 	private:
-		int textX, textY;
+		int textX, textY, textWidth, textHeight;
 		int fontSize = 12;
+		TTF_Font* font;
 		const char* title;
 		SDL_Rect rect;
 		SDL_Renderer* renderer;
@@ -76,9 +79,14 @@ class Window{
 		void update();
 
 	private:
+		std::unique_ptr<SDL_Window> window;
+		std::unique_ptr<SDL_Renderer> renderer;
 		bool running;
 		int width, height;
 		const char* title;
+		int textX, textY, textWidth, textHeight;
+		int fontSize = 12;
+		TTF_Font* font;
 		std::vector<std::unique_ptr<Button>> buttons;
 		std::vector<std::unique_ptr<Section>> sections;
 		Color bgColor = DARKBLUE;

@@ -3,15 +3,20 @@
 #include <memory>
 #include <string>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "window.hpp"
 #include "colors.hpp"
 
+
+struct _TTF_Font;
+using TTF_Font = _TTF_Font;
 
 //------------------Button---------------------
 Button::Button(SDL_Renderer* renderer, int x, int y, const char* title, int width, int height)
 : renderer(renderer), title(title) {
 	rect = SDL_Rect{x, y, width, height};
-	textX = rect.x + (rect.w - MeasureText(title, fontSize)) / 2;
+	TTF_SizeText(font, title, &textWidth, &textHeight);
+	textX = rect.x + (rect.w - textWidth / 2);
 	textY = rect.h + (rect.h - fontSize) / 2;
 }
 
@@ -20,16 +25,16 @@ Button::~Button(){}
 //Setters
 void Button::setWidth(int newWidth){
 	rect.w = newWidth;
-	textX = rect.x + (rect.w - MeasureText(title, fontSize)) / 2;
+	textX = rect.x + (rect.w - textWidth / 2);
 }
 void Button::setHeight(int newHeight){
 	rect.h= newHeight;
-	textY = rect.y + (rect.h - fontSize) / 2;
+	textY = rect.h + (rect.h - fontSize) / 2;
 }
 void Button::setTitle(const char* newTitle){
 	title = newTitle;
-	textX = rect.x + (rect.w - MeasureText(title, fontSize)) / 2;
-	textY = rect.y + (rect.h - fontSize) / 2;
+	textX = rect.x + (rect.w - textWidth / 2);
+	textY = rect.h + (rect.h - fontSize) / 2;
 }
 void Button::setColor(Color newColor){color = newColor;}
 
@@ -61,11 +66,13 @@ Window::Window(int width, int height, const char* title)
 		return;
 	}
 
-	window = SDL_CreateWindow(title,
+	font = TTF_OpenFont("../Assets/Fonts/Smooch_Sans/SmoochSans-VariableFont_wght.ttf", fontSize);
+
+	window.reset(SDL_CreateWindow(title,
 						SDL_WINDOWPOS_CENTERED,
 						SDL_WINDOWPOS_CENTERED,
-						widh, height,
-						SDL_WINDOW_SHOWN);
+						width, height,
+						SDL_WINDOW_SHOWN));
 
 	if (!window){
 		SDL_Log("SDL_CreateWindow Error: %s", SDL_GetError());
@@ -74,10 +81,10 @@ Window::Window(int width, int height, const char* title)
 		return;
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer){
 		SDL_Log("SDL_CreateRenderer Error: %s", SDL_GetError());
-		SDL_DestroyWindow(window);
+		SDL_DestroyWindow(window.get());
 		running = false;
 		SDL_Quit();
 		return;
@@ -88,7 +95,7 @@ Window::Window(int width, int height, const char* title)
 
 Window::~Window(){
 	if (renderer) SDL_DestroyRenderer(renderer);
-	if (window) SDL_DestroyWindow(window);
+	if (window.get()) SDL_DestroyWindow(window.get());
 	SDL_Quit();
 }
 
