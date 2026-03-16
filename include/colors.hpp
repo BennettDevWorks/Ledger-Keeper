@@ -12,7 +12,7 @@ struct Color{
 
 constexpr Color WHITE {255, 255, 255, 255};
 constexpr Color BLACK {0, 0, 0, 255};
-constexpr Color DARKGRAY {80, 80, 80, 255};
+constexpr Color DARKGREY{80, 80, 80, 255};
 constexpr Color DARKBLUE {0, 82, 172, 255};
 
 

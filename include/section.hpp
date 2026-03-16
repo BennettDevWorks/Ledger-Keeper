@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -30,3 +31,4 @@ class Section{
 		int value;
 		Color color = WHITE;
 };
+*/

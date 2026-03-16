@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -23,3 +24,4 @@ SDL_Rect Section::getRect(){return rect;}
 void Section::drawSection(){
 	std::cout << "Draw SectioN" << std::endl;
 }
+*/
