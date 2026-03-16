@@ -12,7 +12,7 @@
 
 class Button{
 	public:
-		Button(SDL_Renderer* renderer, int x, int y, const char* title, int width=100, int height=70);
+		Button(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, const char* title, int width=100, int height=70);
 		~Button();
 
 		//Setters
@@ -46,9 +46,10 @@ class Button{
 		SDL_Rect rect;
 		SDL_Renderer* renderer;
 		Color color = WHITE;
-		Color standByeColor = WHITE;
+		Color standbyeColor = WHITE;
 		Color activeColor = DARKGREY;
 		Color textColor = BLACK;
+        Color borderColor = BLACK;
 		bool isActive;
 };
 

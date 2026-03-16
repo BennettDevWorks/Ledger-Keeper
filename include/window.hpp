@@ -40,7 +40,7 @@ class Window{
 		int width, height;
 		const char* title;
 		int textX, textY, textWidth, textHeight;
-		int fontSize = 12;
+		int fontSize = 18;
 		TTF_Font* font;
 		std::vector<std::unique_ptr<Button>> buttons;
 		//std::vector<std::unique_ptr<Section>> sections;

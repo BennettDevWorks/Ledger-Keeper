@@ -28,7 +28,10 @@ Window::Window(int width, int height, const char* title)
         return;
     }
 
-	font = TTF_OpenFont("../Assets/Fonts/Smooch_Sans/SmoochSans-VariableFont_wght.ttf", fontSize);
+	font = TTF_OpenFont("Assets/Fonts/Smooch_Sans/SmoochSans-VariableFont_wght.ttf", fontSize);
+    if (!font) {
+        SDL_Log("Font load error: %s", TTF_GetError());
+    }
 
 	window.reset(SDL_CreateWindow(title,
 						SDL_WINDOWPOS_CENTERED,
@@ -51,12 +54,14 @@ Window::Window(int width, int height, const char* title)
 		return;
 	}
 
-	buttons.push_back(std::make_unique<Button>(renderer.get(), 10, 10, "Add Section"));
+	buttons.push_back(std::make_unique<Button>(renderer.get(), font, 10, 10, "Add Section"));
 }
 
 Window::~Window(){
-	if (renderer.get()) SDL_DestroyRenderer(renderer.get());
-	if (window.get()) SDL_DestroyWindow(window.get());
+	//if (renderer.get()) SDL_DestroyRenderer(renderer.get());
+	//if (window.get()) SDL_DestroyWindow(window.get());
+    renderer.reset();
+    window.reset();
 	SDL_Quit();
 }
 
@@ -101,13 +106,11 @@ void Window::update(){
 		if (SDL_PointInRect(&mousePos, &button->getRect())){
 			button->setColor(button->getActiveColor());
             button->setIsActive(true);
-            std::cout << "Setting to Active!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 		}else {
             //Unhighlight the button
             if (button->getIsActive()){
                 button->setColor(button->getStandByeColor());
                 button->setIsActive(false);
-                std::cout << "Setting to stand bye----------------------" << std::endl;
             }
         }
 	}
