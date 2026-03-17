@@ -16,12 +16,12 @@ class Window{
 		Window(int width, int height, const char* title);
 		~Window();
 
-		//Setters
+		// SECTION Setters
 		void setWidth(int newWidth);
 		void setHeight(int newHeight);
 		void setTitle(const char* newTitle);
 
-		//Getters
+		// SECTION Getters
 		int getWidth();
 		int getHeight();
 		std::string getTitle();
@@ -29,9 +29,13 @@ class Window{
 		//Draw
 		void drawWindow();
 		void drawButtons();
+        void drawSections();
 
-		//Update
+		// SECTION Update
 		void update();
+
+        // SECTION Callbacks
+        void addSection();
 
 	private:
 		std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window{nullptr, SDL_DestroyWindow};
@@ -43,6 +47,6 @@ class Window{
 		int fontSize = 18;
 		TTF_Font* font;
 		std::vector<std::unique_ptr<Button>> buttons;
-		//std::vector<std::unique_ptr<Section>> sections;
+		std::vector<std::unique_ptr<Section>> sections;
 		Color bgColor = DARKBLUE;
 };

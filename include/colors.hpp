@@ -10,6 +10,7 @@ struct Color{
 	: r(red), g(green), b(blue), a(alpha) {}
 };
 
+// SECTION set colours 
 constexpr Color WHITE {255, 255, 255, 255};
 constexpr Color BLACK {0, 0, 0, 255};
 constexpr Color DARKGREY{80, 80, 80, 255};

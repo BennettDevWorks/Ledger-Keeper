@@ -12,7 +12,7 @@
 struct _TTF_Font;
 using TTF_Font = _TTF_Font;
 
-//------------------Button---------------------
+//SECTION ------------------Button---------------------
 Button::Button(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, const char* title, int width, int height)
 : renderer(renderer), title(title), font(newFont) {
 	rect = SDL_Rect{x, y, width, height};
@@ -24,7 +24,7 @@ Button::Button(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, const ch
 
 Button::~Button(){}
 
-//Setters
+// SECTION Setters
 void Button::setWidth(int newWidth){
 	rect.w = newWidth;
 	textX = rect.x + (rect.w - textWidth / 2);
@@ -41,7 +41,7 @@ void Button::setTitle(const char* newTitle){
 void Button::setColor(Color newColor){color = newColor;}
 void Button::setIsActive(bool newIsActive){isActive = newIsActive;}
 
-//Getters
+// SECTION Getters
 int Button::getWidth(){return rect.w;}
 int Button::getHeight(){return rect.h;}
 bool Button::getIsActive(){return isActive;}
@@ -50,7 +50,7 @@ Color Button::getActiveColor(){return activeColor;}
 Color Button::getStandByeColor(){return standbyeColor;}
 const SDL_Rect& Button::getRect() const {return rect;} 
 
-//Drawers
+// SECTION Drawers
 void Button::drawButton(){
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(renderer, &rect);
@@ -85,4 +85,39 @@ void Button::drawButton(){
     SDL_DestroyTexture(textTexture);
 }
 
-//Actions
+// SECTION Actions
+bool Button::pointInRect(int x, int y){
+    return x >= rect.x && x < rect.x + rect.w &&
+            y >= rect.y && y < rect.y + rect.h;
+}
+
+void Button::click(){
+    if (onClick){
+        onClick();
+    }
+}
+
+void Button::highlight(){color = activeColor; isActive = true;}
+void Button::standbye(){color = standbyeColor; isActive = false;}
+
+void Button::update(int mouseX, int mouseY, bool mousePressed){
+    bool over = pointInRect(mouseX, mouseY);
+    
+    if (!mousePressed){
+        if (over){
+            if (!isActive) highlight();
+        }else{
+            if (isActive) standbye();
+        }
+        std::cout << "wasPressed variable: " << wasPressed << std::endl;
+        wasPressed = false;
+        return;
+    }
+
+    if (over && !wasPressed){
+        if (onClick) onClick();
+    }
+
+    std::cout << "wasPressed variable: " << wasPressed << std::endl;
+    if (wasPressed == false && mousePressed) wasPressed = true;
+}

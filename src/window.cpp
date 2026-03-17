@@ -11,7 +11,7 @@
 struct _TTF_Font;
 using TTF_Font = _TTF_Font;
 
-//------------------Window--------------------
+// SECTION ------------------Window--------------------
 Window::Window(int width, int height, const char* title) 
 : width(width), height(height), title(title) {
 	running = true;
@@ -55,6 +55,9 @@ Window::Window(int width, int height, const char* title)
 	}
 
 	buttons.push_back(std::make_unique<Button>(renderer.get(), font, 10, 10, "Add Section"));
+    buttons[0]->onClick = [this]() {
+        this->addSection();
+    };
 }
 
 Window::~Window(){
@@ -65,7 +68,7 @@ Window::~Window(){
 	SDL_Quit();
 }
 
-//Drawers
+// SECTION Drawers
 void Window::drawWindow(){
     SDL_Event event;
 
@@ -83,6 +86,7 @@ void Window::drawWindow(){
 		update();
 
 		drawButtons();
+        drawSections();
 
 		SDL_RenderPresent(renderer.get());
 	}
@@ -94,29 +98,26 @@ void Window::drawButtons(){
 	}
 }
 
-//Update
+void Window::drawSections(){
+    for (auto& section : sections){
+        section->drawSection();
+    }
+}
+
+// SECTION Update
 void Window::update(){
 	//std::cout << "Updating window" << std::endl;
 	int mouseX, mouseY;
-	SDL_GetMouseState(&mouseX, &mouseY);
+	bool isMousePressed = SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT);
 	SDL_Point mousePos = {mouseX, mouseY};
 
 	for (auto& button : buttons){
 		//Highlight button
-		if (SDL_PointInRect(&mousePos, &button->getRect())){
-			button->setColor(button->getActiveColor());
-            button->setIsActive(true);
-		}else {
-            //Unhighlight the button
-            if (button->getIsActive()){
-                button->setColor(button->getStandByeColor());
-                button->setIsActive(false);
-            }
-        }
+        button->update(mouseX, mouseY, isMousePressed);
 	}
 }
 
-//Setters
+// SECTION Setters
 void Window::setWidth(int newWidth){
 	width = newWidth;
 }
@@ -127,7 +128,19 @@ void Window::setTitle(const char* newTitle){
 	title = newTitle;
 }
 
-//Getters
+// SECTION Getters
 int Window::getWidth(){return width;}
 int Window::getHeight(){return height;}
 std::string Window::getTitle(){return title;}
+
+//Callbacks 
+void Window::addSection(){
+    float size = 150;
+    float x = (width - size) / 2;
+    float y = (height - size) /2;
+
+    sections.push_back(std::make_unique<Section>(renderer.get(), x, y, size, size));
+    std::cout << "Added section to middle of window" << std::endl;
+    std::cout << "X: " << x << std::endl;
+    std::cout << "Y: " << y << std::endl;
+}

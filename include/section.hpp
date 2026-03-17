@@ -1,4 +1,5 @@
-/*
+#pragma once 
+
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -8,27 +9,29 @@
 
 class Section{
 	public:
-		Section();
+		Section(SDL_Renderer* renderer, double x, double y, double width, double height);
 		~Section();
 		
-		//Setter
-		void setWidth(int newWidth);
-		void setHeight(int newHeight);
+		// SECTION Setter
+		void setWidth(double newWidth);
+		void setHeight(double newHeight);
 		void setTitle(const char* newTitle);
 
-		//Getter
-		int getWidth();
-		int getHeight();
+		// SECTION Getter
+		double getWidth();
+		double getHeight();
 		const char* getTitle();
 		SDL_Rect getRect();
 
-		//Drawer
+		// SECTION Drawer
 		void drawSection();
 
 	private:
+        double x, y, width, height;
 		const char* title;
 		SDL_Rect rect;
+        SDL_Renderer* renderer;
 		int value;
 		Color color = WHITE;
+        Color borderColor = DARKGREY;
 };
-*/

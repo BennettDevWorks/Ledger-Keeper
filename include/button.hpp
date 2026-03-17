@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <functional>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "colors.hpp"
@@ -15,14 +16,14 @@ class Button{
 		Button(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, const char* title, int width=100, int height=70);
 		~Button();
 
-		//Setters
+		// SECTION Setters
 		void setWidth(int newWidth);
 		void setHeight(int newHeight);
 		void setTitle(const char* title);
 		void setColor(Color newColor);
         void setIsActive(bool newIsActive);
 
-		//Getters
+		// SECTION Getters
 		int getWidth();
 		int getHeight();
 		bool getIsActive();
@@ -32,11 +33,16 @@ class Button{
 		Color getStandByeColor();
 		const SDL_Rect& getRect() const;
 
-		//Drawers
+		// SECTION Drawers
 		void drawButton();
 
-		//Actions
-		void action();
+		// SECTION Actions
+        bool pointInRect(int x, int y);
+        void highlight();
+        void standbye();
+        std::function<void()> onClick;//call back function 
+		void click();
+        void update(int mouseX, int mouseY, bool mousePressed);
 
 	private:
 		int textX, textY, textWidth, textHeight;
@@ -51,6 +57,7 @@ class Button{
 		Color textColor = BLACK;
         Color borderColor = BLACK;
 		bool isActive;
+        bool wasPressed = false;
 };
 
 class AddSectionButton : public Button{
