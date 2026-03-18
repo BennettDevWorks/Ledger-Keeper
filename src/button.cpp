@@ -64,7 +64,7 @@ void Button::drawButton(){
     SDL_Surface* textSurface = TTF_RenderText_Blended(font, title, sdlTextColor);
 
     if (!textSurface){
-        //std::cout << "Text render error" << std::endl;
+        std::cout << "Text render error" << std::endl;
         return;
     }
 
@@ -109,7 +109,6 @@ void Button::update(int mouseX, int mouseY, bool mousePressed){
         }else{
             if (isActive) standbye();
         }
-        std::cout << "wasPressed variable: " << wasPressed << std::endl;
         wasPressed = false;
         return;
     }
@@ -118,6 +117,5 @@ void Button::update(int mouseX, int mouseY, bool mousePressed){
         if (onClick) onClick();
     }
 
-    std::cout << "wasPressed variable: " << wasPressed << std::endl;
     if (wasPressed == false && mousePressed) wasPressed = true;
 }

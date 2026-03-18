@@ -106,15 +106,31 @@ void Window::drawSections(){
 
 // SECTION Update
 void Window::update(){
-	//std::cout << "Updating window" << std::endl;
 	int mouseX, mouseY;
-	bool isMousePressed = SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT);
+	bool isMousePressed = (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;
 	SDL_Point mousePos = {mouseX, mouseY};
 
 	for (auto& button : buttons){
 		//Highlight button
         button->update(mouseX, mouseY, isMousePressed);
 	}
+
+    for (auto& section : sections){
+        section->update(mouseX, mouseY, isMousePressed);
+
+        if (draggingSection){
+            if (!draggingSection->getDragging()) {
+                draggingSection = nullptr;
+            }
+
+            if (section->getDragging() && section.get() != draggingSection)
+                section->setDragging(false);
+        }
+
+        if (!draggingSection){
+            if (section->getDragging()) draggingSection = section.get();
+        }
+    }
 }
 
 // SECTION Setters
@@ -135,12 +151,9 @@ std::string Window::getTitle(){return title;}
 
 //Callbacks 
 void Window::addSection(){
-    float size = 150;
-    float x = (width - size) / 2;
-    float y = (height - size) /2;
+    int size = 150;
+    int x = (width - size) / 2;
+    int y = (height - size) /2;
 
     sections.push_back(std::make_unique<Section>(renderer.get(), x, y, size, size));
-    std::cout << "Added section to middle of window" << std::endl;
-    std::cout << "X: " << x << std::endl;
-    std::cout << "Y: " << y << std::endl;
 }

@@ -48,5 +48,6 @@ class Window{
 		TTF_Font* font;
 		std::vector<std::unique_ptr<Button>> buttons;
 		std::vector<std::unique_ptr<Section>> sections;
+        Section* draggingSection = nullptr;
 		Color bgColor = DARKBLUE;
 };
