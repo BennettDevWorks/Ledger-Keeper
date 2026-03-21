@@ -9,7 +9,7 @@
 
 class Section{
 	public:
-		Section(SDL_Renderer* renderer, int x, int y, int width, int height);
+		Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int width, int height);
 		~Section();
 		
 		// SECTION Setter
@@ -27,6 +27,7 @@ class Section{
 
 		// SECTION Drawer
 		void drawSection();
+        void drawSectionTitle();
 
         // SECTION Actions
         bool pointInRect(int x, int y);
@@ -35,13 +36,16 @@ class Section{
 
 	private:
         int x, y, width, height;
-		const char* title;
+		const char* title = "New Section";
+        int titleX, titleY, titleWidth, titleHeight;
+        TTF_Font* font;
 		SDL_Rect rect;
         SDL_Rect dragBar;
         SDL_Renderer* renderer;
 		int value;
 		Color color = WHITE;
         Color borderColor = DARKGREY;
+        Color textColor = BLACK;
         bool dragging = false;
         int mouseXOffSet = 0;
         int mouseYOffSet = 0;

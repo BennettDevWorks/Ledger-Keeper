@@ -1,14 +1,18 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "section.hpp"
 #include "colors.hpp"
 
 
-Section::Section(SDL_Renderer* renderer, int x, int y, int width, int height)
-    : renderer(renderer), x(x), y(y), width(width), height(height){
+Section::Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int width, int height)
+    : renderer(renderer), font(newFont), x(x), y(y), width(width), height(height){
 
         rect = SDL_Rect{(int)x, (int)y, (int)width, (int)height};
+
+        TTF_SizeText(font, title, &titleWidth, &titleHeight);
 
         int dragBarHeight = std::max(10, static_cast<int>(rect.h * 0.1));
         dragBar = SDL_Rect{(int)x, (int)y, (int)width, dragBarHeight};
@@ -47,6 +51,35 @@ void Section::drawSection(){
     //Draw DragBar
     SDL_SetRenderDrawColor(renderer, borderColor.r, borderColor.g, borderColor.b, borderColor.a);
     SDL_RenderFillRect(renderer, &dragBar);
+
+    //Draw Title
+    drawSectionTitle();
+}
+
+void Section::drawSectionTitle(){
+    SDL_Color sdlTextColor = {textColor.r, textColor.g, textColor.b, textColor.a};
+    SDL_Surface* textSurface = TTF_RenderText_Blended(font, title, sdlTextColor);
+
+    if (!textSurface){
+        std::cout << "Text Render error Section" << std::endl;
+        return;
+    }
+
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+    titleWidth = textSurface->w;
+    titleHeight = textSurface->h;
+
+    //Center Title
+    titleX = rect.x + (rect.w - titleWidth) / 2;
+    titleY = rect.y + (rect.h - titleHeight) / 6;
+
+    SDL_Rect textRect = {titleX, titleY, titleWidth, titleHeight};
+    SDL_FreeSurface(textSurface);
+
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+    SDL_DestroyTexture(textTexture);
 }
 
 // SECTION Actions

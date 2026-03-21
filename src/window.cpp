@@ -155,5 +155,5 @@ void Window::addSection(){
     int x = (width - size) / 2;
     int y = (height - size) /2;
 
-    sections.push_back(std::make_unique<Section>(renderer.get(), x, y, size, size));
+    sections.push_back(std::make_unique<Section>(renderer.get(), font, x, y, size, size));
 }
