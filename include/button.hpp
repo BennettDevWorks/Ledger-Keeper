@@ -22,8 +22,14 @@ class Button{
 		void setTitle(const char* title);
 		void setColor(Color newColor);
         void setIsActive(bool newIsActive);
+        void setX(int newX);
+        void setY(int newY);
+        void setRX(int newRX);
+        void setRY(int newRY);
 
 		// SECTION Getters
+        int getRX();
+        int getRY();
 		int getWidth();
 		int getHeight();
 		bool getIsActive();
@@ -58,6 +64,8 @@ class Button{
         Color borderColor = BLACK;
 		bool isActive;
         bool wasPressed = false;
+        int reletiveX;
+        int reletiveY;
 };
 
 class AddSectionButton : public Button{

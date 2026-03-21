@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "colors.hpp"
+#include "button.hpp"
 
 
 class Section{
@@ -28,6 +29,7 @@ class Section{
 		// SECTION Drawer
 		void drawSection();
         void drawSectionTitle();
+        void drawEditButton();
 
         // SECTION Actions
         bool pointInRect(int x, int y);
@@ -49,4 +51,5 @@ class Section{
         bool dragging = false;
         int mouseXOffSet = 0;
         int mouseYOffSet = 0;
+        std::unique_ptr<Button> editButton;
 };

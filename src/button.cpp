@@ -40,8 +40,14 @@ void Button::setTitle(const char* newTitle){
 }
 void Button::setColor(Color newColor){color = newColor;}
 void Button::setIsActive(bool newIsActive){isActive = newIsActive;}
+void Button::setRX(int newRX){ reletiveX = newRX;}
+void Button::setRY(int newRY){ reletiveY = newRY;}
+void Button::setX(int newX){ rect.x = newX;}
+void Button::setY(int newY){ rect.y = newY;}
 
 // SECTION Getters
+int Button::getRX(){return reletiveX;}
+int Button::getRY(){return reletiveY;}
 int Button::getWidth(){return rect.w;}
 int Button::getHeight(){return rect.h;}
 bool Button::getIsActive(){return isActive;}

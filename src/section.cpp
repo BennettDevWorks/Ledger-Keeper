@@ -17,9 +17,20 @@ Section::Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int wi
         int dragBarHeight = std::max(10, static_cast<int>(rect.h * 0.1));
         dragBar = SDL_Rect{(int)x, (int)y, (int)width, dragBarHeight};
 
+
+        int buttonX = x + std::max(static_cast<int>(width * 0.05), 10);
+        int buttonY = y + dragBarHeight + titleHeight + std::max(static_cast<int>(height * 0.05), 10);
+        int buttonWidth = static_cast<int>(width * 0.15);
+        int buttonHeight = static_cast<int>(height *0.15);
+        editButton = std::make_unique<Button>(renderer, font, buttonX, buttonY, "Edit",
+                                                buttonWidth, buttonHeight);
+        editButton->setRX(buttonX - x);
+        editButton->setRY(buttonY - y);
+
         //TODO:
         // DONE Set rect
-        //Set title (x,y)
+        // DONE Set title (x,y)
+        // Add edit section button that makes a pop up
         //set data (x,y)
         //DONE Add drawSection function code 
         //DONE Add dragable code (hold down on top title bar of the section square)
@@ -54,6 +65,7 @@ void Section::drawSection(){
 
     //Draw Title
     drawSectionTitle();
+    drawEditButton();
 }
 
 void Section::drawSectionTitle(){
@@ -82,6 +94,10 @@ void Section::drawSectionTitle(){
     SDL_DestroyTexture(textTexture);
 }
 
+void Section::drawEditButton(){
+    editButton->drawButton();
+}
+
 // SECTION Actions
 bool Section::pointInRect(int x, int y){
     if (x >= rect.x && x < rect.x + rect.w &&
@@ -100,6 +116,8 @@ bool Section::pointInDragBar(int x, int y){
 }
 
 void Section::update(int mouseX, int mouseY, bool mousePressed){
+    editButton->update(mouseX, mouseY, mousePressed);
+
     if (!mousePressed){
         dragging = false;
         return;
@@ -118,6 +136,8 @@ void Section::update(int mouseX, int mouseY, bool mousePressed){
         rect.y = mouseY - mouseYOffSet;
         dragBar.x = mouseX - mouseXOffSet;
         dragBar.y = mouseY - mouseYOffSet;
+        editButton->setX(rect.x + editButton->getRX());
+        editButton->setY(rect.y + editButton->getRY());
     }
 
     bool over = pointInRect(mouseX, mouseY);
