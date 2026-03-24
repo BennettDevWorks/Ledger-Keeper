@@ -67,8 +67,3 @@ class Button{
         int reletiveX;
         int reletiveY;
 };
-
-class AddSectionButton : public Button{
-	public:
-		void drawButton();
-};

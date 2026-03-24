@@ -1,10 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <SDL2/SDL.h>
+#include <SDL2/SDL.h> 
 #include <SDL2/SDL_ttf.h>
 #include "section.hpp"
 #include "colors.hpp"
+#include "editSection.hpp"
 
 
 Section::Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int width, int height)
@@ -26,6 +27,12 @@ Section::Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int wi
                                                 buttonWidth, buttonHeight);
         editButton->setRX(buttonX - x);
         editButton->setRY(buttonY - y);
+        editButton->onClick = [this]() {
+            this->editSection();
+        };
+
+        editWindow = std::make_unique<EditSection>(renderer, font, x, y, width, height);
+        editWindow->setTitle("Edit Section");
 
         //TODO:
         // DONE Set rect
@@ -52,6 +59,12 @@ bool Section::getDragging(){return dragging;}
 
 // SECTION Drawers
 void Section::drawSection(){
+    if (editWindow->getIsActive()){
+        editWindow->drawSection();
+        return;
+    }
+
+
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(renderer, &rect);
 
@@ -65,7 +78,10 @@ void Section::drawSection(){
 
     //Draw Title
     drawSectionTitle();
+
     drawEditButton();
+
+    editWindow->drawSection();
 }
 
 void Section::drawSectionTitle(){
@@ -118,6 +134,10 @@ bool Section::pointInDragBar(int x, int y){
 void Section::update(int mouseX, int mouseY, bool mousePressed){
     editButton->update(mouseX, mouseY, mousePressed);
 
+    if (editWindow->getIsActive()){
+        editWindow->update(mouseX, mouseY, mousePressed);
+    }
+
     if (!mousePressed){
         dragging = false;
         return;
@@ -145,4 +165,12 @@ void Section::update(int mouseX, int mouseY, bool mousePressed){
 
     //TODO button logic goes here
     //if (!dragging){}
+}
+
+// SECTION Callbacks
+void Section::editSection(){
+    editWindow->setActive();
+    editWindow->updatePos(rect.x, rect.y);
+    //editWindow->setX(rect.x);
+    //editWindow->setY(rect.y);
 }

@@ -4,9 +4,14 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include "editSection.hpp"
 #include "colors.hpp"
 #include "button.hpp"
 
+
+class Button;
+class Section;
+class EditSection;
 
 class Section{
 	public:
@@ -36,6 +41,9 @@ class Section{
         bool pointInDragBar(int x, int y);
         void update(int mouseX, int mouseY, bool mousePressed);
 
+        // SECTION Callbacks
+        void editSection();
+
 	private:
         int x, y, width, height;
 		const char* title = "New Section";
@@ -52,4 +60,5 @@ class Section{
         int mouseXOffSet = 0;
         int mouseYOffSet = 0;
         std::unique_ptr<Button> editButton;
+        std::unique_ptr<EditSection> editWindow;
 };

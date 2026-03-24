@@ -8,6 +8,10 @@ struct Color{
 
 	constexpr Color (Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha)
 	: r(red), g(green), b(blue), a(alpha) {}
+
+    SDL_Color toSDL() const {
+        return SDL_Color{r, g, b, a};
+    };
 };
 
 // SECTION set colours 
