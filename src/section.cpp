@@ -8,8 +8,8 @@
 #include "editSection.hpp"
 
 
-Section::Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int width, int height)
-    : renderer(renderer), font(newFont), x(x), y(y), width(width), height(height){
+Section::Section(int newID, SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int width, int height)
+    : id(newID), renderer(renderer), font(newFont), x(x), y(y), width(width), height(height){
 
         rect = SDL_Rect{(int)x, (int)y, (int)width, (int)height};
 
@@ -23,13 +23,29 @@ Section::Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int wi
         int buttonY = y + dragBarHeight + titleHeight + std::max(static_cast<int>(height * 0.05), 10);
         int buttonWidth = static_cast<int>(width * 0.15);
         int buttonHeight = static_cast<int>(height *0.15);
-        editButton = std::make_unique<Button>(renderer, font, buttonX, buttonY, "Edit",
+        editButton = std::make_unique<Button>(renderer, font, buttonX, buttonY, 
+                                                "Edit",
                                                 buttonWidth, buttonHeight);
         editButton->setRX(buttonX - x);
         editButton->setRY(buttonY - y);
         editButton->onClick = [this]() {
             this->editSection();
         };
+
+        int dButtonWidth = static_cast<int>(width * 0.15);
+        int dButtonHeight = static_cast<int>(height * 0.15);
+        int dButtonX = x + width - dButtonWidth;
+        int dButtonY = y + dragBarHeight + dButtonHeight;
+        deleteButton = std::make_unique<Button>(renderer, font, dButtonX, dButtonY, 
+                                                "Delete", 
+                                                dButtonWidth,
+                                                dButtonHeight);
+        deleteButton->setRX(dButtonX - x);
+        deleteButton->setRY(dButtonY - y);
+        deleteButton->onClick = [this](){
+            this->deleteSection(id);
+        };
+
 
         editWindow = std::make_unique<EditSection>(renderer, font, x, y, width, height);
         editWindow->setTitle("Edit Section");
@@ -81,7 +97,8 @@ void Section::drawSection(){
 
     drawEditButton();
 
-    editWindow->drawSection();
+    drawDeleteButton();
+    //editWindow->drawSection();
 }
 
 void Section::drawSectionTitle(){
@@ -114,6 +131,11 @@ void Section::drawEditButton(){
     editButton->drawButton();
 }
 
+void Section::drawDeleteButton(){
+    deleteButton->drawButton();
+}
+
+
 // SECTION Actions
 bool Section::pointInRect(int x, int y){
     if (x >= rect.x && x < rect.x + rect.w &&
@@ -133,6 +155,7 @@ bool Section::pointInDragBar(int x, int y){
 
 void Section::update(int mouseX, int mouseY, bool mousePressed){
     editButton->update(mouseX, mouseY, mousePressed);
+    deleteButton->update(mouseX, mouseY, mousePressed);
 
     if (editWindow->getIsActive()){
         editWindow->update(mouseX, mouseY, mousePressed);
@@ -158,6 +181,8 @@ void Section::update(int mouseX, int mouseY, bool mousePressed){
         dragBar.y = mouseY - mouseYOffSet;
         editButton->setX(rect.x + editButton->getRX());
         editButton->setY(rect.y + editButton->getRY());
+        deleteButton->setX(rect.x + deleteButton->getRX());
+        deleteButton->setY(rect.y + deleteButton->getRY());
     }
 
     bool over = pointInRect(mouseX, mouseY);
@@ -173,4 +198,10 @@ void Section::editSection(){
     editWindow->updatePos(rect.x, rect.y);
     //editWindow->setX(rect.x);
     //editWindow->setY(rect.y);
+}
+
+void Section::deleteSection(int id){
+    if (setDelete){
+        setDelete();
+    }
 }

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <memory>
 #include <string>
 #include <SDL2/SDL.h>
@@ -36,6 +37,7 @@ class Window{
 
         // SECTION Callbacks
         void addSection();
+        void deleteSection(int id);
 
 	private:
 		std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window{nullptr, SDL_DestroyWindow};
@@ -45,9 +47,10 @@ class Window{
 		const char* title;
 		int textX, textY, textWidth, textHeight;
 		int fontSize = 18;
+        int nextSectionID = 0;
 		TTF_Font* font;
 		std::vector<std::unique_ptr<Button>> buttons;
-		std::vector<std::unique_ptr<Section>> sections;
+		std::unordered_map<int, std::unique_ptr<Section>> sections;
         Section* draggingSection = nullptr;
 		Color bgColor = DARKBLUE;
 };

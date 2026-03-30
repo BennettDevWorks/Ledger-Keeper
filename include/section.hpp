@@ -15,7 +15,7 @@ class EditSection;
 
 class Section{
 	public:
-		Section(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int width, int height);
+		Section(int newID, SDL_Renderer* renderer, TTF_Font* newFont, int x, int y, int width, int height);
 		~Section();
 		
 		// SECTION Setter
@@ -30,11 +30,13 @@ class Section{
 		const char* getTitle();
 		SDL_Rect getRect();
         bool getDragging();
+        int getID();
 
 		// SECTION Drawer
 		void drawSection();
         void drawSectionTitle();
         void drawEditButton();
+        void drawDeleteButton();
 
         // SECTION Actions
         bool pointInRect(int x, int y);
@@ -43,9 +45,11 @@ class Section{
 
         // SECTION Callbacks
         void editSection();
+        void deleteSection(int id);
+        std::function<void()> setDelete;
 
 	private:
-        int x, y, width, height;
+        int x, y, width, height, id;
 		const char* title = "New Section";
         int titleX, titleY, titleWidth, titleHeight;
         TTF_Font* font;
@@ -60,5 +64,6 @@ class Section{
         int mouseXOffSet = 0;
         int mouseYOffSet = 0;
         std::unique_ptr<Button> editButton;
+        std::unique_ptr<Button> deleteButton;
         std::unique_ptr<EditSection> editWindow;
 };

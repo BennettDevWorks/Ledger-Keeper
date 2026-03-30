@@ -99,9 +99,15 @@ void Window::drawButtons(){
 }
 
 void Window::drawSections(){
+    for (auto& [id, section] : sections){
+        section->drawSection();
+    }
+
+    /*
     for (auto& section : sections){
         section->drawSection();
     }
+    */
 }
 
 // SECTION Update
@@ -115,6 +121,23 @@ void Window::update(){
         button->update(mouseX, mouseY, isMousePressed);
 	}
 
+
+    for (auto& [id, section] : sections){
+        section->update(mouseX, mouseY, isMousePressed);
+
+        if (draggingSection){
+            if (!draggingSection->getDragging())
+                draggingSection = nullptr;
+
+            if (section->getDragging() && section.get() != draggingSection)
+                section->setDragging(false);
+        }
+
+        if(!draggingSection)
+            if (section->getDragging()) draggingSection = section.get();
+    }
+
+    /*
     for (auto& section : sections){
         section->update(mouseX, mouseY, isMousePressed);
 
@@ -131,6 +154,7 @@ void Window::update(){
             if (section->getDragging()) draggingSection = section.get();
         }
     }
+    */
 }
 
 // SECTION Setters
@@ -155,5 +179,21 @@ void Window::addSection(){
     int x = (width - size) / 2;
     int y = (height - size) /2;
 
-    sections.push_back(std::make_unique<Section>(renderer.get(), font, x, y, size, size));
+    sections[nextSectionID] = std::make_unique<Section>(
+                nextSectionID,
+                renderer.get(),
+                font,
+                x, y,
+                size, size
+            );
+
+    sections[nextSectionID]->setDelete = [this](){
+        this->deleteSection(nextSectionID);
+    };
+
+    nextSectionID++;
+}
+
+void Window::deleteSection(int id){
+    sections.erase(id);
 }
