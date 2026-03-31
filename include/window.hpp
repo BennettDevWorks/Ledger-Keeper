@@ -34,6 +34,7 @@ class Window{
 
 		// SECTION Update
 		void update();
+        void deferredDelete();
 
         // SECTION Callbacks
         void addSection();
@@ -51,6 +52,7 @@ class Window{
 		TTF_Font* font;
 		std::vector<std::unique_ptr<Button>> buttons;
 		std::unordered_map<int, std::unique_ptr<Section>> sections;
+        std::vector<int> idsToDelete;
         Section* draggingSection = nullptr;
 		Color bgColor = DARKBLUE;
 };

@@ -202,6 +202,7 @@ void Section::editSection(){
 
 void Section::deleteSection(int id){
     if (setDelete){
+        std::cout << "Delete Section at section level" << std::endl;
         setDelete();
     }
 }

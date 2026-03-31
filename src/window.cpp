@@ -137,24 +137,15 @@ void Window::update(){
             if (section->getDragging()) draggingSection = section.get();
     }
 
-    /*
-    for (auto& section : sections){
-        section->update(mouseX, mouseY, isMousePressed);
+    deferredDelete();
+}
 
-        if (draggingSection){
-            if (!draggingSection->getDragging()) {
-                draggingSection = nullptr;
-            }
-
-            if (section->getDragging() && section.get() != draggingSection)
-                section->setDragging(false);
-        }
-
-        if (!draggingSection){
-            if (section->getDragging()) draggingSection = section.get();
-        }
+void Window::deferredDelete(){
+    for (int id : idsToDelete){
+        sections.erase(id);
     }
-    */
+
+    idsToDelete.clear();
 }
 
 // SECTION Setters
@@ -179,7 +170,9 @@ void Window::addSection(){
     int x = (width - size) / 2;
     int y = (height - size) /2;
 
-    sections[nextSectionID] = std::make_unique<Section>(
+    int id = nextSectionID;
+
+    sections[id] = std::make_unique<Section>(
                 nextSectionID,
                 renderer.get(),
                 font,
@@ -187,13 +180,15 @@ void Window::addSection(){
                 size, size
             );
 
-    sections[nextSectionID]->setDelete = [this](){
-        this->deleteSection(nextSectionID);
+    sections[id]->setDelete = [this, id](){
+        this->deleteSection(id);
     };
 
     nextSectionID++;
 }
 
 void Window::deleteSection(int id){
-    sections.erase(id);
+    std::cout << "Delete section: " << id << "\t at window level" << std::endl;
+    //sections.erase(id);
+    idsToDelete.push_back(id);
 }
