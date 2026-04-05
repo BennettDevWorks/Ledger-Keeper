@@ -7,6 +7,13 @@
 #include "colors.hpp"
 #include "button.hpp"
 
+struct InputField{
+    SDL_Rect rect;
+    const char* label;
+    char text[256];
+    bool isActive;
+};
+
 
 class EditSection{
     public: 
@@ -32,11 +39,14 @@ class EditSection{
         void drawSection();
         void drawSectionTitle();
         void drawConfirmButton();
+        void drawEditInputFields();
 
         // SECTION Action
-        //bool pointInRect();
+        bool pointInRect(int, int, SDL_Rect*);
+        void addEditInputField(const char* newLabel);
         void update(int mouseX, int mouseY, bool mousePressed);
         void updatePos(int newX, int newY);
+        void updateEditInputFields();
         void stopEditing();
 
     private:
@@ -52,6 +62,9 @@ class EditSection{
         Color borderColor = DARKGREY;
         Color textColor = BLACK;
         std::unique_ptr<Button> confirmButton;
+        std::vector<InputField> inputFields;
         bool dragging = false;
         bool active = false;
+        int nextInputFieldX, nextInputFieldY;
+        int inputFieldWidth, inputFieldHeight;
 };

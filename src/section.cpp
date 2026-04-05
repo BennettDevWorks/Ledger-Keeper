@@ -50,11 +50,14 @@ Section::Section(int newID, SDL_Renderer* renderer, TTF_Font* newFont, int x, in
         editWindow = std::make_unique<EditSection>(renderer, font, x, y, width, height);
         editWindow->setTitle("Edit Section");
 
+        editWindow->addEditInputField("Type");
+        editWindow->addEditInputField("Value");
+
         //TODO:
         // DONE Set rect
         // DONE Set title (x,y)
         // Add edit section button that makes a pop up
-        //set data (x,y)
+        // set data (x,y)
         //DONE Add drawSection function code 
         //DONE Add dragable code (hold down on top title bar of the section square)
 }
@@ -98,7 +101,6 @@ void Section::drawSection(){
     drawEditButton();
 
     drawDeleteButton();
-    //editWindow->drawSection();
 }
 
 void Section::drawSectionTitle(){
@@ -187,17 +189,12 @@ void Section::update(int mouseX, int mouseY, bool mousePressed){
 
     bool over = pointInRect(mouseX, mouseY);
     if (!over) return;
-
-    //TODO button logic goes here
-    //if (!dragging){}
 }
 
 // SECTION Callbacks
 void Section::editSection(){
     editWindow->setActive();
     editWindow->updatePos(rect.x, rect.y);
-    //editWindow->setX(rect.x);
-    //editWindow->setY(rect.y);
 }
 
 void Section::deleteSection(int id){
