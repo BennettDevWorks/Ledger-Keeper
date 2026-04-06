@@ -37,6 +37,7 @@ class Section{
         void drawSectionTitle();
         void drawEditButton();
         void drawDeleteButton();
+        void drawValue();
 
         // SECTION Actions
         bool pointInRect(int x, int y);
@@ -51,7 +52,8 @@ class Section{
 	private:
         int x, y, width, height, id;
 		const char* title = "New Section";
-        int titleX, titleY, titleWidth, titleHeight;
+        SDL_Texture* titleTexture;
+        SDL_Rect titleRect;
         TTF_Font* font;
 		SDL_Rect rect;
         SDL_Rect dragBar;

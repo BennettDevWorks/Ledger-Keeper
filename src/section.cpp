@@ -13,15 +13,27 @@ Section::Section(int newID, SDL_Renderer* renderer, TTF_Font* newFont, int x, in
 
         rect = SDL_Rect{(int)x, (int)y, (int)width, (int)height};
 
-        TTF_SizeText(font, title, &titleWidth, &titleHeight);
+        TTF_SizeText(font, title, &titleRect.w, &titleRect.h);
+
+
+        titleRect.x = rect.x + (rect.w - titleRect.w) / 2;
+        titleRect.y = rect.y + (rect.h - titleRect.h) / 6;
+
+        SDL_Surface*  textSurface = TTF_RenderText_Blended(font, title, textColor.toSDL());
+        if (!textSurface){
+            std::cerr << "Error with section: " << newID << std::endl;
+            throw std::runtime_error("Text Render Error Section");
+        }
+
+        titleTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
         int dragBarHeight = std::max(10, static_cast<int>(rect.h * 0.1));
         dragBar = SDL_Rect{(int)x, (int)y, (int)width, dragBarHeight};
 
 
-        int buttonX = x + std::max(static_cast<int>(width * 0.05), 10);
-        int buttonY = y + dragBarHeight + titleHeight + std::max(static_cast<int>(height * 0.05), 10);
-        int buttonWidth = static_cast<int>(width * 0.15);
+        int buttonX = x;
+        int buttonY = y + dragBarHeight + titleRect.h + std::max(static_cast<int>(height * 0.05), 10);
+        int buttonWidth = (width >> 2);
         int buttonHeight = static_cast<int>(height *0.15);
         editButton = std::make_unique<Button>(renderer, font, buttonX, buttonY, 
                                                 "Edit",
@@ -32,10 +44,10 @@ Section::Section(int newID, SDL_Renderer* renderer, TTF_Font* newFont, int x, in
             this->editSection();
         };
 
-        int dButtonWidth = static_cast<int>(width * 0.15);
+        int dButtonWidth = static_cast<int>(width * 0.25);
         int dButtonHeight = static_cast<int>(height * 0.15);
         int dButtonX = x + width - dButtonWidth;
-        int dButtonY = y + dragBarHeight + dButtonHeight;
+        int dButtonY = y + dragBarHeight + titleRect.h + std::max(static_cast<int>(height * 0.05), 10);
         deleteButton = std::make_unique<Button>(renderer, font, dButtonX, dButtonY, 
                                                 "Delete", 
                                                 dButtonWidth,
@@ -52,6 +64,7 @@ Section::Section(int newID, SDL_Renderer* renderer, TTF_Font* newFont, int x, in
 
         editWindow->addEditInputField("Type");
         editWindow->addEditInputField("Value");
+
 
         //TODO:
         // DONE Set rect
@@ -104,29 +117,7 @@ void Section::drawSection(){
 }
 
 void Section::drawSectionTitle(){
-    SDL_Color sdlTextColor = {textColor.r, textColor.g, textColor.b, textColor.a};
-    SDL_Surface* textSurface = TTF_RenderText_Blended(font, title, sdlTextColor);
-
-    if (!textSurface){
-        std::cout << "Text Render error Section" << std::endl;
-        return;
-    }
-
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-
-    titleWidth = textSurface->w;
-    titleHeight = textSurface->h;
-
-    //Center Title
-    titleX = rect.x + (rect.w - titleWidth) / 2;
-    titleY = rect.y + (rect.h - titleHeight) / 6;
-
-    SDL_Rect textRect = {titleX, titleY, titleWidth, titleHeight};
-    SDL_FreeSurface(textSurface);
-
-    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-
-    SDL_DestroyTexture(textTexture);
+    SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 }
 
 void Section::drawEditButton(){
@@ -135,6 +126,9 @@ void Section::drawEditButton(){
 
 void Section::drawDeleteButton(){
     deleteButton->drawButton();
+}
+
+void Section::drawValue(){
 }
 
 
@@ -161,6 +155,7 @@ void Section::update(int mouseX, int mouseY, bool mousePressed){
 
     if (editWindow->getIsActive()){
         editWindow->update(mouseX, mouseY, mousePressed);
+        return;
     }
 
     if (!mousePressed){
@@ -179,6 +174,8 @@ void Section::update(int mouseX, int mouseY, bool mousePressed){
     if (dragging){
         rect.x = mouseX - mouseXOffSet;
         rect.y = mouseY - mouseYOffSet;
+        titleRect.x = rect.x + (rect.w - titleRect.w) / 2;
+        titleRect.y = rect.y + (rect.h - titleRect.h) / 6;
         dragBar.x = mouseX - mouseXOffSet;
         dragBar.y = mouseY - mouseYOffSet;
         editButton->setX(rect.x + editButton->getRX());

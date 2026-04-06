@@ -13,7 +13,6 @@ EditSection::EditSection(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y
         
         TTF_SizeText(font, title, &titleWidth, &titleHeight);
 
-        //int buttonWidth = static_cast<int>(width * 0.25);
         int buttonWidth = (width >> 2);
         int buttonHeight = static_cast<int>(height * 0.15);
         int buttonX = x + (width >> 1) - (buttonWidth >> 1);
@@ -33,8 +32,7 @@ EditSection::EditSection(SDL_Renderer* renderer, TTF_Font* newFont, int x, int y
 
        SDL_Surface* textSurface = TTF_RenderText_Blended(font, title, textColor.toSDL()); 
        if (!textSurface){
-           std::cerr << "Text Render error section" << std::endl;
-           return;
+           throw std::runtime_error("Text Render Error Edit Section");
        }
 
        titleTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
